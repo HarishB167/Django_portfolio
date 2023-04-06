@@ -1,13 +1,12 @@
-from wsgiref import validate
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from .models import Mindmap, RevisionGroup, RevisionItem, RevisionLevel
+from .models import Category, Mindmap, RevisionGroup, RevisionItem, RevisionLevel
 
-class RevisionGroupSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.revision_level.level
-
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'title']
 
 class ListMindmapSerializer(serializers.ModelSerializer):
     class Meta:

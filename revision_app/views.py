@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Mindmap, RevisionGroup, RevisionItem
-from .serializers import FormMindmapSerializer, ListMindmapSerializer, RevisionItemSerializer
+from .models import Category, Mindmap, RevisionGroup, RevisionItem
+from .serializers import CategorySerializer, FormMindmapSerializer, ListMindmapSerializer, RevisionItemSerializer
 
 # Create your views here.
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    
+
 class MindmapViewSet(ModelViewSet):
     queryset = Mindmap.objects.prefetch_related('revisions')\
                 .select_related('category')\

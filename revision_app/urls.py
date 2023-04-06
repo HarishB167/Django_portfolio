@@ -4,6 +4,7 @@ from . import views
 
 router = DefaultRouter()
 router.register('mindmaps', views.MindmapViewSet)
+router.register('categories', views.CategoryViewSet)
 
 mindmap_router = NestedDefaultRouter(router, 'mindmaps', lookup='mindmap')
 mindmap_router.register('revisions', views.RevisionItemViewSet, basename='mindmap-revisions')
