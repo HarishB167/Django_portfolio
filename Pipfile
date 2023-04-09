@@ -8,6 +8,7 @@ django = "*"
 django-debug-toolbar = "*"
 djangorestframework = "*"
 drf-nested-routers = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
