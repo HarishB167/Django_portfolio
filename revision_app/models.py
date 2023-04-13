@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -8,13 +9,15 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.title
 
+def get_default_my_date():
+  return timezone.now()
 
 class Mindmap(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='mindmaps')
     image_link = models.URLField()
-    creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateTimeField(default=get_default_my_date, blank=True)
 
     def __str__(self) -> str:
         return f'{self.title} : {self.category.title}'

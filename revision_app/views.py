@@ -2,9 +2,10 @@ from django.db.models import Prefetch
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
-from .models import Category, Mindmap, RevisionGroup, RevisionItem
+from .models import Category, Mindmap, RevisionGroup, RevisionItem, RevisionLevel
 from .serializers import CategorySerializer, FormMindmapSerializer\
-            , ListMindmapSerializer, RevisionItemListSerializer, RevisionItemSerializer
+            , ListMindmapSerializer, RevisionItemListSerializer\
+            , RevisionItemSerializer, RevisionLevelSerializer
 
 # Create your views here.
 class CategoryViewSet(ModelViewSet):
@@ -66,3 +67,7 @@ class RevisionItemListViewSet(ModelViewSet):
 
         return Response(result)
 
+
+class RevisionLevelViewSet(ModelViewSet):
+    serializer_class = RevisionLevelSerializer
+    queryset = RevisionLevel.objects.all()

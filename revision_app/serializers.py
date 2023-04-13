@@ -19,7 +19,10 @@ class ListMindmapSerializer(serializers.ModelSerializer):
     next_revision_date = serializers.SerializerMethodField(method_name='get_next_revision_date')
 
     def get_revision_level(self, model):
-        return model.revisions.revision_level.level
+        try:
+            return model.revisions.revision_level.level
+        except ObjectDoesNotExist:
+                return None
 
     def get_revision_count(self, model):
         try:
@@ -90,3 +93,9 @@ class RevisionItemListSerializer(serializers.ModelSerializer):
     
     def get_mindmap_category(self, model):
         return model.revision_group.mindmap.category.title
+        
+
+class RevisionLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RevisionLevel
+        fields = ['id', 'level']
