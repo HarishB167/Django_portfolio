@@ -1,6 +1,6 @@
+from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
-
 from .models import Category, Mindmap, RevisionGroup, RevisionItem, RevisionLevel
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -46,13 +46,34 @@ class FormMindmapSerializer(serializers.ModelSerializer):
             'creation_date', 'revision_level']
 
     revision_level = serializers.PrimaryKeyRelatedField(write_only=True, queryset=RevisionLevel.objects.all())
+    creation_date = serializers.DateTimeField(required=False)
+
+    def create_revisions_routine(self, rev_group):
+        rev_items = []
+        # Every day for first week
+        for x in range(7):
+            rev_items.append(RevisionItem(revision_group=rev_group, date=datetime.now() + timedelta(days=x)))
+        # Every other day for second week
+        for x in range(3):
+            rev_items.append(RevisionItem(revision_group=rev_group, date=datetime.now() + timedelta(days=9+2*x)))
+        # Twice a week for 3-4th week
+        for x in [18,21,25,28]:
+            rev_items.append(RevisionItem(revision_group=rev_group, date=datetime.now() + timedelta(days=x)))
+        # Once a week for 2nd-3rd month
+        for x in [35,42,49,56,63,70,77,84,91]:
+            rev_items.append(RevisionItem(revision_group=rev_group, date=datetime.now() + timedelta(days=x)))
+        # Once a month after 3rd month
+        # To do, Currently added manually
+        RevisionItem.objects.bulk_create(rev_items)
 
     def create(self, validated_data):
         level = validated_data['revision_level']
         del validated_data['revision_level']
         mindmap = Mindmap(**validated_data)
+        mindmap.creation_date = datetime.now()
         mindmap.save()
-        RevisionGroup.objects.create(mindmap=mindmap, revision_level=level)
+        rev_group = RevisionGroup.objects.create(mindmap=mindmap, revision_level=level)
+        self.create_revisions_routine(rev_group)
         return mindmap
 
     def update(self, instance, validated_data):
@@ -93,7 +114,7 @@ class RevisionItemListSerializer(serializers.ModelSerializer):
     
     def get_mindmap_category(self, model):
         return model.revision_group.mindmap.category.title
-        
+
 
 class RevisionLevelSerializer(serializers.ModelSerializer):
     class Meta:
