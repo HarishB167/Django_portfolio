@@ -11,18 +11,29 @@ class CategorySerializer(serializers.ModelSerializer):
 class ListMindmapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mindmap
-        fields = ['id', 'title', 'description', 'category', 'image_link',
-            'creation_date', 'revision_count', 'revision_level', 'next_revision_date']
+        fields = ['id', 'title', 'description', 'category', 'category_name', 'image_link',
+            'creation_date', 'revision_count', 'revision_level', 'revision_level_id', 'next_revision_date']
 
+    category_name = serializers.SerializerMethodField(method_name='get_category_name')
     revision_level = serializers.SerializerMethodField(method_name='get_revision_level')
+    revision_level_id = serializers.SerializerMethodField(method_name='get_revision_level_id')
     revision_count = serializers.SerializerMethodField(method_name='get_revision_count')
     next_revision_date = serializers.SerializerMethodField(method_name='get_next_revision_date')
+
+    def get_category_name(self, model):
+        return model.category.title
 
     def get_revision_level(self, model):
         try:
             return model.revisions.revision_level.level
         except ObjectDoesNotExist:
-                return None
+            return None
+
+    def get_revision_level_id(self, model):
+        try:
+            return model.revisions.revision_level.id
+        except ObjectDoesNotExist:
+            return None
 
     def get_revision_count(self, model):
         try:
@@ -99,12 +110,17 @@ class RevisionItemSerializer(serializers.ModelSerializer):
 class RevisionItemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = RevisionItem
-        fields = ['id', 'date', 'revision_done',
-            'mindmap_title',  'mindmap_created', 'mindmap_category']
+        fields = ['id', 'date', 'revision_done', 'mindmap_id',
+            'mindmap_title',  'mindmap_created', 'mindmap_category', 'mindmap_url']
 
+    mindmap_id = serializers.SerializerMethodField(method_name='get_mindmap_id')
     mindmap_title = serializers.SerializerMethodField(method_name='get_mindmap_title')
     mindmap_created = serializers.SerializerMethodField(method_name='get_mindmap_created')
     mindmap_category = serializers.SerializerMethodField(method_name='get_mindmap_category')
+    mindmap_url = serializers.SerializerMethodField(method_name="get_mindmap_url")
+
+    def get_mindmap_id(self, model):
+        return model.revision_group.mindmap.id
 
     def get_mindmap_title(self, model):
         return model.revision_group.mindmap.title
@@ -114,6 +130,9 @@ class RevisionItemListSerializer(serializers.ModelSerializer):
     
     def get_mindmap_category(self, model):
         return model.revision_group.mindmap.category.title
+    
+    def get_mindmap_url(self, model):
+        return model.revision_group.mindmap.image_link
 
 
 class RevisionLevelSerializer(serializers.ModelSerializer):

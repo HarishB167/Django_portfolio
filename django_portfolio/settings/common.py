@@ -10,20 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3z^3qowo1_n&hs=^=*-khj5v51bc!v^0zit3wmf^gsy*)ekjur'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['.loca.lt','127.0.0.1']
 
@@ -41,10 +38,12 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework',
     'revision_app',
+    'core',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -55,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = 'django_portfolio.urls'
 
 TEMPLATES = [
     {
@@ -73,18 +72,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'django_portfolio.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
@@ -137,3 +127,32 @@ INTERNAL_IPS = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'handlers' : {  # What will happen to log messages
+    'console': {
+      'class': 'logging.StreamHandler',
+      
+    },
+    'file' : {
+      'class': 'logging.FileHandler',
+      'filename': 'general.log'
+    }
+  },
+  'loggers': { # define logger for individual app or submodule
+    '': { # captures from all apps
+      'handlers': ['console', 'file'], # reference handlers
+      'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO')
+    }
+  },
+  'formatters': {
+    'verbose': {
+      'format': '{asctime} ({levelname}) - {name} - {message}',
+      'style': '{'
+    }
+  }
+}

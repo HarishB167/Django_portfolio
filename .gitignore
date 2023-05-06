@@ -1,6 +1,8 @@
 Pipfile.lock
 db.sqlite3
+general.log
 
 *.pyc
-.venv/*
-.vscode/*
+.venv/
+.vscode/
+static/
