@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
     path('revisionapp/', include('revision_app.urls')),
-    path('', include('core.urls'))
+    path('', include('core.urls')),
+    path('revsync/', include('revision_sync.urls')),
 ]

@@ -13,6 +13,7 @@ whitenoise = "*"
 gunicorn = "*"
 dj-database-url = "*"
 mysqlclient = "*"
+openpyxl = "*"
 
 [dev-packages]
 

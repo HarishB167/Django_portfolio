@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework',
     'revision_app',
+    'revision_sync',
     'core',
 ]
 
